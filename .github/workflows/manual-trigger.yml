@@ -7,16 +7,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          ref: ${GITHUB_REF#refs/heads/}
       - name: Extract branch name
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: EXTRACT_BRANCH
-      - run: |
+
+      - name: 'Show image'
+        run: |
           echo "IMAGE: fxfinancing/wl-donus-api:${{ steps.EXTRACT_BRANCH.outputs.branch }}"
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ steps.EXTRACT_BRANCH.outputs.branch }}
       # - run: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" && cd donus/api && docker build -f Dockerfile.prod -t fxfinancing/wl-donus-api:${{ steps.EXTRACT_BRANCH.outputs.branch }} . && docker push fxfinancing/wl-donus-api:${{ steps.EXTRACT_BRANCH.outputs.branch }}
       #   env:
       #     DOCKER_USERNAME:  ${{ secrets.DOCKER_USER}}
